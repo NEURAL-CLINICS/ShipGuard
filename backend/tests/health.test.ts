@@ -1,13 +1,17 @@
 import type { Express } from "express";
 import request from "supertest";
-import { beforeAll, describe, expect, it } from "vitest";
+import { beforeAll, beforeEach, describe, expect, it } from "vitest";
+import { resetStores } from "../src/storage";
 
 let app: Express;
 
 beforeAll(async () => {
-  process.env.JWT_SECRET = "test-secret-test-secret";
   const mod = await import("../src/app");
   app = mod.createApp();
+});
+
+beforeEach(async () => {
+  await resetStores();
 });
 
 describe("health", () => {

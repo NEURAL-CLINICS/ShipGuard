@@ -1,25 +1,27 @@
-import { Project } from "../models";
-import { runScanners } from "../scanners";
-import { findingStore, scanStore } from "../storage";
+import { config } from "../config";
+import { Project, SourceType } from "../models";
+import { getScanQueue } from "../queue";
+import { runScan } from "./scanRunner";
+import { scanStore } from "../storage";
 
-const now = () => new Date().toISOString();
+type ScanOptions = {
+  branch?: string;
+  sourceType: SourceType;
+  sourceRef: string;
+};
 
-export async function enqueueScan(project: Project, branch?: string) {
-  const scan = scanStore.create(project.id, branch);
-  scanStore.update(scan.id, { status: "running", startedAt: now() });
+export async function enqueueScan(project: Project, options: ScanOptions) {
+  const scan = await scanStore.create(project.id, options);
 
-  try {
-    const findings = await runScanners(project);
-    findingStore.addMany(scan.id, findings);
-    return (
-      scanStore.update(scan.id, {
-        status: "completed",
-        finishedAt: now(),
-        findingsCount: findings.length
-      }) ?? scan
-    );
-  } catch (error) {
-    scanStore.update(scan.id, { status: "failed", finishedAt: now() });
-    throw error;
+  if (config.queueMode === "redis") {
+    const queue = getScanQueue();
+    if (!queue) {
+      throw new Error("Scan queue unavailable");
+    }
+    await queue.add("scan", { scanId: scan.id });
+    return scan;
   }
+
+  await runScan(scan.id);
+  return (await scanStore.findById(scan.id)) ?? scan;
 }

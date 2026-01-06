@@ -1,38 +1,22 @@
-import type { Finding, Project } from "../models";
+import type { Project } from "../models";
+import { dependencyScanner } from "./dependencyScanner";
+import { patternScanner } from "./patternScanner";
+import { resolveRuleSet } from "./rules";
+import type { ScanContext, ScannerAdapter, ScannerFinding } from "./types";
 
-export type ScannerFinding = Omit<Finding, "id" | "scanId">;
+const adapters: ScannerAdapter[] = [patternScanner, dependencyScanner];
 
-export type ScannerAdapter = {
-  id: string;
-  name: string;
-  run: (project: Project) => Promise<ScannerFinding[]>;
-};
-
-const sampleAdapter: ScannerAdapter = {
-  id: "sample",
-  name: "Baseline Checks",
-  async run(project: Project) {
-    return [
-      {
-        ruleId: "SG0001",
-        severity: "medium",
-        file: "README.md",
-        line: 1,
-        description: "Project should document security review steps before release.",
-        remediation: "Add a release checklist section to README.",
-        scannerSource: "sample"
-      }
-    ];
-  }
-};
-
-const adapters: ScannerAdapter[] = [sampleAdapter];
-
-export async function runScanners(project: Project) {
+export async function runScanners(input: { project: Project; rootPath: string }) {
+  const ruleSet = resolveRuleSet(input.project.ruleSet);
+  const context: ScanContext = {
+    project: input.project,
+    rootPath: input.rootPath,
+    ruleSet
+  };
   const results: ScannerFinding[] = [];
   for (const adapter of adapters) {
     try {
-      const findings = await adapter.run(project);
+      const findings = await adapter.run(context);
       results.push(...findings);
     } catch (error) {
       console.warn(`Scanner ${adapter.id} failed`, error);

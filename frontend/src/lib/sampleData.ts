@@ -16,6 +16,7 @@ export type Project = {
   name: string;
   repoUrl: string;
   lastScan: string;
+  lastScanStatus: "queued" | "running" | "completed" | "failed";
   riskLevel: "low" | "medium" | "high";
   findings: Finding[];
 };
@@ -26,6 +27,7 @@ export const sampleProjects: Project[] = [
     name: "LaunchPad",
     repoUrl: "https://github.com/acme/launchpad",
     lastScan: "2025-01-12 10:24",
+    lastScanStatus: "completed",
     riskLevel: "medium",
     findings: [
       {
@@ -55,6 +57,7 @@ export const sampleProjects: Project[] = [
     name: "ShipLite",
     repoUrl: "https://github.com/acme/shiplite",
     lastScan: "2025-01-11 16:40",
+    lastScanStatus: "completed",
     riskLevel: "high",
     findings: [
       {
@@ -82,3 +85,13 @@ export const sampleProjects: Project[] = [
 ];
 
 export const severityOrder: Severity[] = ["critical", "high", "medium", "low", "info"];
+
+export function getRiskLevel(findings: Finding[]) {
+  if (findings.some((finding) => finding.severity === "critical")) {
+    return "high";
+  }
+  if (findings.some((finding) => finding.severity === "high")) {
+    return "medium";
+  }
+  return "low";
+}

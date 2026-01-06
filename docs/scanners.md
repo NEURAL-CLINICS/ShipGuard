@@ -5,6 +5,7 @@ Each finding is normalized to:
 - id
 - rule_id
 - severity (critical, high, medium, low, info)
+- category
 - file
 - line
 - description
@@ -14,10 +15,18 @@ Each finding is normalized to:
 ## Adapter interface
 Adapters map tool output to the common schema and return findings plus metadata.
 
+Default adapters:
+- Pattern scanner (regex rules in core rule set)
+- Dependency scanner (flags unstable version specs)
+
+Rules live in `backend/src/scanners/rules.ts`.
+
 ## Rule sets
 - Core OWASP-inspired rules enabled by default.
 - Rule groups can be enabled or disabled per project.
 - Severity overrides are supported for tuning.
+
+Projects set `ruleSet` on creation or update.
 
 ## Adding a scanner
 1. Implement an adapter in `backend/src/scanners`.

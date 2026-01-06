@@ -1,10 +1,12 @@
 import ProjectCard from "../components/ProjectCard";
 import StatCard from "../components/StatCard";
-import { sampleProjects, severityOrder } from "../lib/sampleData";
+import { severityOrder } from "../lib/sampleData";
 import type { Severity } from "../lib/sampleData";
+import { useProjects } from "../lib/useProjects";
 
 export default function Dashboard() {
-  const allFindings = sampleProjects.flatMap((project) => project.findings);
+  const { projects, loading, error } = useProjects();
+  const allFindings = projects.flatMap((project) => project.findings);
   const counts = severityOrder.reduce((acc, severity) => {
     acc[severity] = allFindings.filter((finding) => finding.severity === severity).length;
     return acc;
@@ -26,8 +28,10 @@ export default function Dashboard() {
       <div className="section-header">
         <h3>Projects</h3>
       </div>
+      {loading ? <div className="empty">Loading projects...</div> : null}
+      {error ? <div className="empty">{error}</div> : null}
       <div className="project-grid">
-        {sampleProjects.map((project) => (
+        {projects.map((project) => (
           <ProjectCard key={project.id} project={project} />
         ))}
       </div>

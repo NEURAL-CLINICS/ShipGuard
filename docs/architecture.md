@@ -16,9 +16,9 @@
 
 ## Data model (initial)
 - users: id, email, password_hash, created_at
-- projects: id, owner_id, name, repo_url, retention_days
-- scans: id, project_id, status, started_at, finished_at
-- findings: id, scan_id, rule_id, severity, file, line, description
+- projects: id, owner_id, name, repo_url, rule_set, retention_days, last_upload_path
+- scans: id, project_id, status, source_type, source_ref, started_at, finished_at
+- findings: id, scan_id, rule_id, severity, category, file, line, description
 - rule_sets: id, name, enabled_rules, severity_overrides
 
 ## Data flow
@@ -38,3 +38,7 @@
 - Local dev uses Docker Compose with Postgres and Redis.
 - Production uses managed Postgres/Redis and object storage.
 - Scan workers should run in a restricted network and sandbox.
+
+## Runtime modes
+- Storage defaults to in-memory; set `STORAGE_MODE=postgres` and `DATABASE_URL` to persist.
+- Queue defaults to inline; set `QUEUE_MODE=redis` and `REDIS_URL` to enable BullMQ workers.

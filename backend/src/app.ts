@@ -8,6 +8,7 @@ import { errorHandler } from "./middleware/errorHandler";
 import authRoutes from "./routes/auth";
 import projectRoutes from "./routes/projects";
 import reportRoutes from "./routes/reports";
+import scannerRoutes from "./routes/scanners";
 import scanRoutes from "./routes/scans";
 
 export function createApp() {
@@ -31,6 +32,7 @@ export function createApp() {
   app.use("/api/auth", authRoutes);
   app.use("/api/projects", projectRoutes);
   app.use("/api/scans", scanRoutes);
+  app.use("/api/scanners", scannerRoutes);
   app.use("/api/reports", reportRoutes);
 
   app.use(errorHandler);

@@ -1,15 +1,17 @@
 import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import SeverityBadge from "../components/SeverityBadge";
-import { sampleProjects, severityOrder } from "../lib/sampleData";
+import { severityOrder } from "../lib/sampleData";
 import type { Severity } from "../lib/sampleData";
+import { useProjects } from "../lib/useProjects";
 
 const severityOptions: (Severity | "all")[] = ["all", ...severityOrder];
 const sortOptions = ["severity", "file", "title"] as const;
 
 export default function ProjectDetail() {
   const { projectId } = useParams();
-  const project = sampleProjects.find((item) => item.id === projectId);
+  const { projects } = useProjects();
+  const project = projects.find((item) => item.id === projectId);
   const [query, setQuery] = useState("");
   const [severity, setSeverity] = useState<Severity | "all">("all");
   const [sortBy, setSortBy] = useState<(typeof sortOptions)[number]>("severity");
@@ -54,6 +56,14 @@ export default function ProjectDetail() {
       <div className="section-header">
         <h2>{project.name}</h2>
         <p>{project.repoUrl}</p>
+      </div>
+      <div className="status-strip">
+        <div>
+          Last scan: {project.lastScan} ({project.lastScanStatus})
+        </div>
+        <Link className="link" to={`/projects/${project.id}/checklist`}>
+          View release checklist
+        </Link>
       </div>
       <div className="action-row">
         <button className="button" type="button">

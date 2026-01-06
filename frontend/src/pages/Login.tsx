@@ -14,12 +14,20 @@ export default function Login() {
           Password
           <input type="password" placeholder="Password" />
         </label>
-        <button className="button primary" type="button">
-          Sign in
-        </button>
-        <Link className="link" to="/dashboard">
-          Continue to demo workspace
+      <button className="button primary" type="button">
+        Sign in
+      </button>
+      <div className="auth-links">
+        <Link className="link" to="/signup">
+          Create an account
         </Link>
+        <Link className="link" to="/reset">
+          Forgot password
+        </Link>
+      </div>
+      <Link className="link" to="/dashboard">
+        Continue to demo workspace
+      </Link>
       </div>
     </div>
   );

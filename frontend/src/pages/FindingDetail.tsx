@@ -1,10 +1,11 @@
 import { Link, useParams } from "react-router-dom";
 import SeverityBadge from "../components/SeverityBadge";
-import { sampleProjects } from "../lib/sampleData";
+import { useProjects } from "../lib/useProjects";
 
 export default function FindingDetail() {
   const { projectId, findingId } = useParams();
-  const project = sampleProjects.find((item) => item.id === projectId);
+  const { projects } = useProjects();
+  const project = projects.find((item) => item.id === projectId);
   const finding = project?.findings.find((item) => item.id === findingId);
 
   if (!project || !finding) {

@@ -1,11 +1,13 @@
 import { Link, useParams } from "react-router-dom";
 import StatCard from "../components/StatCard";
-import { sampleProjects, severityOrder } from "../lib/sampleData";
+import { severityOrder } from "../lib/sampleData";
 import type { Severity } from "../lib/sampleData";
+import { useProjects } from "../lib/useProjects";
 
 export default function Checklist() {
   const { projectId } = useParams();
-  const project = sampleProjects.find((item) => item.id === projectId);
+  const { projects } = useProjects();
+  const project = projects.find((item) => item.id === projectId);
 
   if (!project) {
     return (

@@ -6,6 +6,8 @@ import Dashboard from "./pages/Dashboard";
 import FindingDetail from "./pages/FindingDetail";
 import Login from "./pages/Login";
 import ProjectDetail from "./pages/ProjectDetail";
+import Reset from "./pages/Reset";
+import Signup from "./pages/Signup";
 function AppLayout() {
   return (
     <div className="app-shell">
@@ -31,6 +33,8 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/reset" element={<Reset />} />
         <Route path="/*" element={<AppLayout />} />
       </Routes>
     </BrowserRouter>

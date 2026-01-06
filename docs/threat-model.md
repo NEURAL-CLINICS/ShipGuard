@@ -28,6 +28,7 @@ ShipGuard handles code uploads or repository fetches, scan execution, and findin
 - Malicious archives: validate type, limit size, scan in sandbox.
 - SSRF via repo URL: allowlist schemes, block internal IP ranges.
 - Scanner escape: run in containers with no host mounts.
+- Local path abuse: gate local sources behind explicit config.
 - Sensitive data leakage: avoid logging raw code; encrypt storage.
 - Credential theft: enforce bcrypt, rate limiting, and MFA-ready auth.
 - DoS by large scans: queue limits, per-tenant quotas, timeouts.

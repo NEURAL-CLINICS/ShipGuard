@@ -20,6 +20,11 @@ Install dependencies:
 pnpm install
 ```
 
+Configure env:
+```bash
+cp backend/.env.example backend/.env
+```
+
 Start dev servers:
 ```bash
 pnpm dev
@@ -27,6 +32,11 @@ pnpm dev
 
 Backend runs at http://localhost:3001
 Frontend runs at http://localhost:5173
+
+Run full stack with Docker:
+```bash
+docker compose -f infra/docker-compose.yml --env-file infra/.env.example up --build
+```
 
 ## Repo layout
 - backend: API and scan orchestration
@@ -37,6 +47,12 @@ Frontend runs at http://localhost:5173
 ## Security and privacy
 ShipGuard stores only minimal metadata and findings.
 Uploaded code is handled transiently and is never logged.
+
+## Self scan
+Generate a self-security report from the repo:
+```bash
+pnpm --filter @shipguard/backend self-scan
+```
 
 ## License
 MIT
