@@ -1,0 +1,12 @@
+{
+  "name": "@shipguard/infra",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "node -e \"console.log('Use docker compose in infra/')\"",
+    "lint": "node -e \"console.log('infra lint placeholder')\"",
+    "test": "node -e \"console.log('infra tests placeholder')\"",
+    "build": "node -e \"console.log('infra build placeholder')\"",
+    "type-check": "node -e \"console.log('infra type-check placeholder')\""
+  }
+}
