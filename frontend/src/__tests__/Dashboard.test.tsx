@@ -6,7 +6,9 @@ import Dashboard from "../pages/Dashboard";
 describe("Dashboard", () => {
   it("renders overview and projects", () => {
     render(
-      <MemoryRouter>
+      <MemoryRouter
+        future={{ v7_startTransition: true, v7_relativeSplatPath: true }}
+      >
         <Dashboard />
       </MemoryRouter>
     );
