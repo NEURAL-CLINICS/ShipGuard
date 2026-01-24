@@ -1,4 +1,4 @@
-import { Queue, Worker } from "bullmq";
+import { Queue, Worker, ConnectionOptions } from "bullmq";
 import IORedis from "ioredis";
 import { config } from "./config";
 
@@ -6,7 +6,7 @@ const queueName = "shipguard:scans";
 let queue: Queue | null = null;
 let connection: IORedis | null = null;
 
-function getConnection() {
+function getConnection(): IORedis {
   if (!connection) {
     if (!config.redisUrl) {
       throw new Error("REDIS_URL is required for redis queue mode");
@@ -21,7 +21,7 @@ export function getScanQueue() {
     return null;
   }
   if (!queue) {
-    queue = new Queue(queueName, { connection: getConnection() });
+    queue = new Queue(queueName, { connection: getConnection() as unknown as ConnectionOptions });
   }
   return queue;
 }
@@ -37,6 +37,6 @@ export function registerScanWorker(
     async (job) => {
       await handler(job.data as { scanId: string });
     },
-    { connection: getConnection() }
+    { connection: getConnection() as unknown as ConnectionOptions }
   );
 }
