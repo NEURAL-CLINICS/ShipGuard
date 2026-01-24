@@ -1,18 +1,32 @@
-import { Queue, Worker } from "bullmq";
-import IORedis from "ioredis";
+import { Queue, Worker, type ConnectionOptions } from "bullmq";
 import { config } from "./config";
 
 const queueName = "shipguard:scans";
 let queue: Queue | null = null;
-let connection: IORedis | null = null;
+let connection: ConnectionOptions | null = null;
 
 function getConnection() {
-  if (!connection) {
-    if (!config.redisUrl) {
-      throw new Error("REDIS_URL is required for redis queue mode");
-    }
-    connection = new IORedis(config.redisUrl, { maxRetriesPerRequest: null });
+  if (connection) {
+    return connection;
   }
+
+  if (!config.redisUrl) {
+    throw new Error("REDIS_URL is required for redis queue mode");
+  }
+
+  const url = new URL(config.redisUrl);
+  const dbFromPath = url.pathname && url.pathname !== "/" ? Number(url.pathname.slice(1)) : undefined;
+
+  connection = {
+    host: url.hostname,
+    port: url.port ? Number(url.port) : 6379,
+    username: url.username || undefined,
+    password: url.password || undefined,
+    db: Number.isFinite(dbFromPath) ? dbFromPath : undefined,
+    maxRetriesPerRequest: null,
+    tls: url.protocol === "rediss:" ? {} : undefined
+  };
+
   return connection;
 }
 

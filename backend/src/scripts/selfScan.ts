@@ -29,7 +29,7 @@ async function run() {
 
   const report = buildMarkdownReport(project, updatedScan ?? scan, findings);
   const detailLines = findings.map(
-    (finding) =>
+    (finding: (typeof findings)[number]) =>
       `- [${finding.severity}] ${finding.ruleId} ${finding.file}:${finding.line} ${finding.description}`
   );
 

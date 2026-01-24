@@ -1,16 +1,27 @@
-FROM node:20-alpine AS builder
-WORKDIR /app
-COPY package.json pnpm-lock.yaml* ./
-RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
-RUN pnpm install
-COPY . .
-RUN pnpm build
+FROM node:22-alpine AS builder
 
-FROM node:20-alpine
 WORKDIR /app
-COPY package.json pnpm-lock.yaml* ./
 RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
-RUN pnpm install --prod
-COPY --from=builder /app/dist ./dist
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY backend/package.json ./backend/package.json
+
+RUN pnpm install --frozen-lockfile
+
+COPY backend ./backend
+RUN pnpm --filter @shipguard/backend build
+
+FROM node:22-alpine
+
+WORKDIR /app
+RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY backend/package.json ./backend/package.json
+
+RUN pnpm install --prod --frozen-lockfile --filter @shipguard/backend...
+
+COPY --from=builder /app/backend/dist ./backend/dist
+
 ENV NODE_ENV=production
-CMD ["node", "dist/index.js"]
+CMD ["node", "backend/dist/index.js"]

@@ -38,6 +38,22 @@ Run full stack with Docker:
 docker compose -f infra/docker-compose.yml --env-file infra/.env.example up --build
 ```
 
+## Deployment (containers)
+
+ShipGuard ships as 3 containers: `backend` (API), `worker` (scan runner), and `frontend` (static UI).
+
+Local/Compose:
+```bash
+cp infra/.env.example infra/.env
+docker compose -f infra/docker-compose.yml --env-file infra/.env up --build
+```
+
+Production notes:
+- `JWT_SECRET` must be 16+ characters.
+- For persistence, set `STORAGE_MODE=postgres` and provide `DATABASE_URL`.
+- For background workers, set `QUEUE_MODE=redis` and provide `REDIS_URL`.
+- Frontend requires `VITE_API_URL` at build time (e.g. `https://api.example.com`).
+
 ## Repo layout
 - backend: API and scan orchestration
 - frontend: React dashboard
